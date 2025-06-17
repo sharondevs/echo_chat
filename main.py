@@ -12,7 +12,7 @@ import json
 from pydantic import Field
 
 from models.models import (
-    DocumentUploadRequest, QueryMode, DocumentUploadResponse, HealthResponse
+    QueryMode, DocumentUploadResponse, HealthResponse
 )
 from services.rag_service import RAGService
 from config.config import settings
