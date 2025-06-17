@@ -38,6 +38,15 @@ async def lifespan(app: FastAPI):
     # Shutdown
     logger.info("Shutting down RAG service...")
 
+# Initialize for Azure Functions compatibility
+def init_rag_service():
+    """Initialize RAG service for Azure Functions"""
+    global rag_service
+    if rag_service is None:
+        logger.info("Initializing RAG service for Azure Functions...")
+        rag_service = RAGService()
+        logger.info("RAG service initialized successfully")
+
 app = FastAPI(
     title="Echo-CHAT RAG API",
     description="A scalable RAG application with streaming chat and document querying capabilities",
@@ -57,6 +66,9 @@ app.add_middleware(
 
 def get_rag_service() -> RAGService:
     """Dependency to get RAG service instance"""
+    if rag_service is None:
+        # Initialize for Azure Functions if not already done
+        init_rag_service()
     if rag_service is None:
         raise HTTPException(status_code=503, detail="RAG service not initialized")
     return rag_service

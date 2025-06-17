@@ -1,0 +1,19 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "",
+    "FUNCTIONS_WORKER_RUNTIME": "python",
+    "AzureWebJobsFeatureFlags": "EnableWorkerIndexing",
+    "GOOGLE_API_KEY": "your-google-api-key-here",
+    "ENVIRONMENT": "development",
+    "MAX_TOKENS": "8192",
+    "CHUNK_SIZE": "1024",
+    "CHUNK_OVERLAP": "200",
+    "MODEL_NAME": "gemini-2.0-flash",
+    "LOG_LEVEL": "INFO"
+  },
+  "Host": {
+    "CORS": "*",
+    "CORSCredentials": false
+  }
+} 
