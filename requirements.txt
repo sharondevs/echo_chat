@@ -4,11 +4,11 @@ uvicorn==0.24.0
 
 # LlamaIndex core and extensions - compatible versions
 llama-index-core==0.12.42
-llama-index-llms-gemini==0.5.0
+llama-index-llms-google-genai==0.2.1
 llama-index-embeddings-google-genai==0.2.0
 
 # Google Gemini API
-google-generativeai==0.5.2
+google-generativeai==0.8.3
 
 # Data models and validation
 pydantic==2.8.0
