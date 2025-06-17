@@ -2,10 +2,10 @@
 fastapi==0.104.1
 uvicorn==0.24.0
 
-# LlamaIndex core and extensions
-llama-index==0.9.13
-llama-index-llms-gemini==0.1.7
-llama-index-embeddings-google-genai
+# LlamaIndex core and extensions - compatible versions
+llama-index-core==0.12.42
+llama-index-llms-gemini==0.5.0
+llama-index-embeddings-google-genai==0.2.0
 
 # Google Gemini API
 google-generativeai==0.3.2
