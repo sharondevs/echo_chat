@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  echo-chat-api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - ENVIRONMENT=development
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      - LOG_LEVEL=INFO
+      - RESUME_PATH=./data/resume
+      - DOCUMENTS_PATH=./data/documents
+      - CHROMA_DB_PATH=./data/chroma_db
+    volumes:
+      - ./data:/app/data
+      - ./.env:/app/.env:ro
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 3600s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+ 
