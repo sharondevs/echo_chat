@@ -5,7 +5,6 @@ from pathlib import Path
 from typing import List, Dict, Any, Optional, AsyncGenerator
 from llama_index.core import VectorStoreIndex, Settings
 from llama_index.llms.gemini import Gemini
-from llama_index.embeddings.openai import OpenAIEmbedding
 from llama_index.core.chat_engine import CondenseQuestionChatEngine
 from llama_index.core.memory import ChatMemoryBuffer
 from google import genai
