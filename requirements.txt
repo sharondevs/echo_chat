@@ -2,8 +2,8 @@
 fastapi==0.104.1
 uvicorn[standard]==0.24.0
 
-# Azure Functions
-azure-functions==1.18.0
+# Azure Functions - corrected version
+azure-functions==1.23.0
 
 # LlamaIndex core and extensions - compatible versions
 llama-index-core==0.12.42
