@@ -8,8 +8,7 @@ on:
 env:
     AZURE_CONTAINER_REGISTRY: ${{ secrets.AZURE_CONTAINER_REGISTRY }}
     RESOURCE_GROUP: ${{ secrets.RESOURCE_GROUP }}
-    CONTAINER_APP_NAME: ${{ secrets.CONTAINER_APP_NAME }}
-    CONTAINER_APP_ENVIRONMENT: ${{ secrets.CONTAINER_APP_ENVIRONMENT }}
+    CONTAINER_APP_NAME: echo-chat
 
 jobs:
     build-and-deploy:
