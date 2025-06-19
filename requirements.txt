@@ -11,7 +11,7 @@ llama-index-llms-google-genai==0.2.1
 llama-index-embeddings-google-genai==0.2.0
 
 # Google Gemini API
-google-generativeai==0.8.3
+google-generativeai==0.8.5
 
 # Data models and validation
 pydantic==2.8.0
