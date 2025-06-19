@@ -85,7 +85,14 @@ jobs:
                     --cpu 0.25 \
                     --memory 0.5Gi \
                     --min-replicas 1 \
-                    --max-replicas 3
+                    --max-replicas 3 \
+                    --env-vars \
+                      GOOGLE_API_KEY="${{ secrets.GOOGLE_API_KEY }}" \
+                      ENVIRONMENT="production" \
+                      LOG_LEVEL="INFO" \
+                      RESUME_PATH="/app/data/resume" \
+                      DOCUMENTS_PATH="/app/data/documents" \
+                      CHROMA_DB_PATH="/app/data/chroma_db"
 
             - name: Get Container App URL
               run: |
