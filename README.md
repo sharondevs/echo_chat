@@ -59,7 +59,7 @@ docker-compose up
 
 The repository includes a GitHub Actions workflow that:
 - Tests the application on push/PR
-- Builds and pushes Docker images to GitHub Container Registry
+- Builds and pushes Docker images to GitHub Container or other CRs
 - Provides deployment hooks for your infrastructure
 
 **Setup:**
