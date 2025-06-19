@@ -9,6 +9,7 @@ env:
     AZURE_CONTAINER_REGISTRY: ${{ secrets.AZURE_CONTAINER_REGISTRY }}
     RESOURCE_GROUP: ${{ secrets.RESOURCE_GROUP }}
     CONTAINER_APP_NAME: echo-chat
+    CONTAINER_APP_ENVIRONMENT: echo-chat-env
 
 jobs:
     build-and-deploy:
@@ -41,16 +42,50 @@ jobs:
                   creds: ${{ secrets.AZURE_CREDENTIALS }}
 
             - name: Deploy to Azure Container Apps
-              uses: azure/container-apps-deploy-action@v1
-              with:
-                  imageToDeploy: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.CONTAINER_APP_NAME }}:${{ github.sha }}
-                  containerAppName: ${{ env.CONTAINER_APP_NAME }}
-                  acrName: ${{ env.AZURE_CONTAINER_REGISTRY }}
-                  acrUsername: ${{ secrets.ACR_USERNAME }}
-                  acrPassword: ${{ secrets.ACR_PASSWORD }}
-                  resourceGroup: ${{ env.RESOURCE_GROUP }}
-                  targetPort: 8000
-                  ingress: external
+              run: |
+                  # Create Container App Environment if it doesn't exist
+                  if ! az containerapp env show --name ${{ env.CONTAINER_APP_ENVIRONMENT }} --resource-group ${{ env.RESOURCE_GROUP }} --output none 2>/dev/null; then
+                    echo "Creating Container App Environment..."
+                    az containerapp env create \
+                      --name ${{ env.CONTAINER_APP_ENVIRONMENT }} \
+                      --resource-group ${{ env.RESOURCE_GROUP }} \
+                      --location eastus
+                  fi
+                  
+                  # Delete existing Container App if it exists and is in failed state
+                  if az containerapp show --name ${{ env.CONTAINER_APP_NAME }} --resource-group ${{ env.RESOURCE_GROUP }} --output none 2>/dev/null; then
+                    PROVISIONING_STATE=$(az containerapp show \
+                      --name ${{ env.CONTAINER_APP_NAME }} \
+                      --resource-group ${{ env.RESOURCE_GROUP }} \
+                      --query "properties.provisioningState" \
+                      --output tsv 2>/dev/null || echo "Unknown")
+                    
+                    if [ "$PROVISIONING_STATE" = "Failed" ] || [ "$PROVISIONING_STATE" = "Unknown" ]; then
+                      echo "Container App is in $PROVISIONING_STATE state. Deleting it..."
+                      az containerapp delete \
+                        --name ${{ env.CONTAINER_APP_NAME }} \
+                        --resource-group ${{ env.RESOURCE_GROUP }} \
+                        --yes
+                      echo "Waiting for deletion to complete..."
+                      sleep 30
+                    fi
+                  fi
+                  
+                  # Create or update Container App
+                  az containerapp create \
+                    --name ${{ env.CONTAINER_APP_NAME }} \
+                    --resource-group ${{ env.RESOURCE_GROUP }} \
+                    --environment ${{ env.CONTAINER_APP_ENVIRONMENT }} \
+                    --image ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.CONTAINER_APP_NAME }}:${{ github.sha }} \
+                    --target-port 8000 \
+                    --ingress external \
+                    --registry-server ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io \
+                    --registry-username ${{ secrets.ACR_USERNAME }} \
+                    --registry-password ${{ secrets.ACR_PASSWORD }} \
+                    --cpu 0.25 \
+                    --memory 0.5Gi \
+                    --min-replicas 1 \
+                    --max-replicas 3
 
             - name: Get Container App URL
               run: |
