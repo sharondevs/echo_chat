@@ -26,12 +26,6 @@ wheels/
 .env.production
 
 # Data directories (keep structure but ignore contents)
-data/chroma_db/*
-data/documents/*
-data/resume/*
-!data/chroma_db/.gitkeep
-!data/documents/.gitkeep
-!data/resume/.gitkeep
 
 # IDE
 
