@@ -9,7 +9,6 @@ env:
     AZURE_CONTAINER_REGISTRY: ${{ secrets.AZURE_CONTAINER_REGISTRY }}
     RESOURCE_GROUP: ${{ secrets.RESOURCE_GROUP }}
     CONTAINER_APP_NAME: echo-chat
-    CONTAINER_APP_ENVIRONMENT: ${{ secrets.CONTAINER_APP_ENVIRONMENT }}
 
 jobs:
     build-and-deploy:
@@ -50,7 +49,6 @@ jobs:
                   acrUsername: ${{ secrets.ACR_USERNAME }}
                   acrPassword: ${{ secrets.ACR_PASSWORD }}
                   resourceGroup: ${{ env.RESOURCE_GROUP }}
-                  containerAppEnvironment: ${{ env.CONTAINER_APP_ENVIRONMENT }}
                   targetPort: 8000
                   ingress: external
 
