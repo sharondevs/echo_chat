@@ -84,7 +84,7 @@ jobs:
                     --registry-password ${{ secrets.ACR_PASSWORD }} \
                     --cpu 0.25 \
                     --memory 0.5Gi \
-                    --min-replicas 1 \
+                    --min-replicas 0 \
                     --max-replicas 3 \
                     --env-vars \
                       GOOGLE_API_KEY="${{ secrets.GOOGLE_API_KEY }}" \
