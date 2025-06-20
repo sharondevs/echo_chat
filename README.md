@@ -4,18 +4,42 @@ A scalable RAG (Retrieval-Augmented Generation) application built with FastAPI, 
 
 ## Features
 
-- **Dual Query Modes**: Resume analysis and document-based Q&A
-- **Streaming Chat**: Real-time streaming responses for better UX
-- **Document Upload**: Support for PDF, TXT, and DOCX files
-- **Session Management**: Persistent chat context and document indexing
-- **Vector Search**: ChromaDB-powered semantic search
+Echo-CHAT is an intelligent assistant that operates in two distinct modes:
+
+1. **Resume Mode**: Specialized AI assistant for analyzing Sharon's professional profile with contextual understanding
+2. **Documents Mode**: RAG-powered document Q&A system using vector search and conversational memory
+
+The application leverages Google's latest Gemini 2.0 Flash model with LlamaIndex for sophisticated document processing and ChromaDB for semantic search capabilities.
+
+## Key Features
+
+### **Dual Operating Modes**
+- **Resume Analysis**: Deep professional profile analysis with career insights and contextual responses
+- **Document Q&A**: Upload and query multiple documents with persistent conversation context
+
+### **Advanced AI Capabilities**
+- **Streaming Responses**: Real-time streaming chat with Server-Sent Events (SSE)
+- **Conversation Memory**: Persistent chat context within sessions for natural conversations
+- **Semantic Search**: ChromaDB-powered vector search for accurate document retrieval
+- **Context Caching**: Optimized performance with Google Gemini's context caching
+
+### **Document Processing**
+- **Multi-format Support**: PDF, TXT, DOCX, and DOC files
+- **Intelligent Chunking**: Optimized text segmentation for better retrieval
+- **Session Management**: Isolated document contexts per user session
+
+### **Production Ready**
+- **Docker Support**: Complete containerization with Docker Compose
+- **Health Monitoring**: Comprehensive health checks and logging
+- **Azure Functions Compatible**: Cloud deployment ready
 
 ## Quick Start
 
 ### Prerequisites
 
 - Python 3.11+
-- Google API Key (for Gemini models)
+- Google API Key with Gemini access
+- Valid billing account for Google AI services
 
 ### Local Development
 
@@ -29,6 +53,8 @@ chmod +x start.sh
 
 2. **Configure your API key**
 ```bash
+# Copy and edit environment file
+cp env.example .env
 # Edit .env file with your Google API key
 GOOGLE_API_KEY=your_google_api_key_here
 ```
@@ -71,56 +97,119 @@ The repository includes a GitHub Actions workflow that:
 
 ### Core Endpoints
 
-- `GET /echo-chat` - Health check and service info
-- `POST /echo-chat/stream-chat` - Streaming chat endpoint
-- `POST /echo-chat/upload` - Document upload for indexing
-- `GET /echo-chat/session/{session_id}` - Session information
-- `DELETE /echo-chat/session/{session_id}` - Cleanup session
+- `GET /echo-chat` - Health check with available modes
+- `POST /echo-chat/stream-chat` - Streaming chat endpoint (main feature)
+- `POST /echo-chat/upload` - Document upload for RAG indexing
+- `GET /echo-chat/session/{session_id}` - Session statistics and info
+- `DELETE /echo-chat/session/{session_id}` - Cleanup session resources
 - `GET /echo-chat/modes` - Available query modes
 - `GET /health` - Simple health check
 
 ### Usage Examples
 
-#### Resume Chat
+#### Resume Analysis Chat
 ```bash
 curl -X POST "http://localhost:8000/echo-chat/stream-chat" \
   -H "Content-Type: application/json" \
   -d '{
-    "message": "What is my work experience?",
+    "message": "What is Sharon'\''s technical expertise and career progression?",
     "mode": "resume"
   }'
 ```
 
-#### Document Upload & Chat
+#### Document Upload & RAG Chat
 ```bash
-# Upload documents
+# Upload documents first
 curl -X POST "http://localhost:8000/echo-chat/upload" \
-  -F "files=@document1.pdf" \
-  -F "files=@document2.txt"
+  -F "files=@technical_documentation.pdf" \
+  -F "files=@project_specs.docx"
 
-# Chat with documents
+# Chat with uploaded documents (streaming response)
 curl -X POST "http://localhost:8000/echo-chat/stream-chat" \
   -H "Content-Type: application/json" \
   -d '{
-    "message": "Summarize the uploaded documents",
+    "message": "Summarize the key technical requirements from these documents",
     "mode": "documents",
     "session_id": "your-session-id"
   }'
 ```
 
+## Technology Stack
+
+### AI & ML
+- **Google Gemini 2.0 Flash**: Latest multimodal language model
+- **LlamaIndex**: Advanced RAG framework with streaming support
+- **Google GenAI Embeddings**: text-embedding-004 for semantic search
+- **ChromaDB**: Vector database for document retrieval
+
+### Backend & API
+- **FastAPI**: High-performance async web framework
+- **Uvicorn**: ASGI server with streaming support
+- **Pydantic**: Data validation and settings management
+
+### Document Processing
+- **PyPDF2**: PDF text extraction
+- **docx2txt**: Word document processing
+- **aiofiles**: Async file handling
+
 ## Configuration
 
 ### Environment Variables
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `GOOGLE_API_KEY` | Google API key for Gemini models | Required |
-| `RESUME_PATH` | Path to resume files | `./data/resume` |
-| `DOCUMENTS_PATH` | Path for document storage | `./data/documents` |
-| `CHROMA_DB_PATH` | ChromaDB storage path | `./data/chroma_db` |
+| Variable | Description | Default | Required |
+|----------|-------------|---------|----------|
+| `GOOGLE_API_KEY` | Google API key for Gemini models | - | ✅ |
+| `RESUME_PATH` | Path to resume files | `./data/resume` | ❌ |
+| `DOCUMENTS_PATH` | Document storage path | `./data/documents` | ❌ |
+| `CHROMA_DB_PATH` | ChromaDB storage path | `./data/chroma_db` | ❌ |
+| `ENVIRONMENT` | Application environment | `development` | ❌ |
+| `LOG_LEVEL` | Logging level | `INFO` | ❌ |
 
-| `ENVIRONMENT` | Application environment | `development` |
-| `LOG_LEVEL` | Logging level | `INFO` |
+### Model Configuration
+
+The application is configured to use:
+- **LLM**: Gemini 2.0 Flash (`gemini-2.0-flash`)
+- **Embeddings**: Google GenAI text-embedding-004
+- **Chunk Size**: 1024 tokens with 200 token overlap
+- **Max Output**: 8192 tokens
+- **Temperature**: 0.3 for documents, 0.4 for resume
+
+## Architecture
+
+### Resume Mode Architecture
+```
+User Query → Gemini 2.0 Flash → Context Cache (Resume) → Streaming Response
+```
+
+### Documents Mode Architecture  
+```
+Documents → Processing → ChromaDB Vector Store → LlamaIndex RAG → Chat Engine with Memory → Streaming Response
+```
+
+### Session Management
+- **Resume Mode**: Stateless with context caching
+- **Documents Mode**: Session-based with persistent chat memory and document context
+
+## API Documentation
+
+Interactive API documentation is available at:
+- **Swagger UI**: `http://localhost:8000/docs`
+- **ReDoc**: `http://localhost:8000/redoc`
+
+## Development Notes
+
+### Resume Mode Features
+- Specialized for Sharon's professional profile analysis
+- Uses Google Gemini's context caching for optimal performance
+- Provides career insights, skills analysis, and professional guidance
+- Third-person perspective responses as Sharon's assistant
+
+### Documents Mode Features
+- Session-based RAG with conversational memory
+- Supports multiple document types and formats
+- Vector similarity search with top-5 retrieval
+- Persistent chat context within sessions
+- Automatic session cleanup capabilities
 
 ## Project Structure
 
@@ -148,12 +237,6 @@ echo_chat/
 │   └── resume/           # Resume files
 └── requirements.txt      # Dependencies
 ```
-
-## API Documentation
-
-Interactive API documentation is available at:
-- Swagger UI: `http://localhost:8000/docs`
-- ReDoc: `http://localhost:8000/redoc`
 
 ## Making Changes
 
