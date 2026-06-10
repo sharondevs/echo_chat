@@ -4,7 +4,7 @@ import asyncio
 from pathlib import Path
 from typing import List, Dict, Any, Optional, AsyncGenerator
 from llama_index.core import VectorStoreIndex, Settings
-from llama_index.llms.gemini import Gemini
+from llama_index.llms.google_genai import GoogleGenAI
 from llama_index.core.chat_engine import CondenseQuestionChatEngine
 from llama_index.core.memory import ChatMemoryBuffer
 from google import genai
@@ -43,16 +43,16 @@ class RAGService:
     def _setup_llama_index(self):
         """Initialize LlamaIndex with Gemini LLM and Google embeddings"""
         try:
-            # Initialize Gemini LLM
-            self.llm = Gemini(
+            # Initialize Gemini LLM (new google-genai backed integration)
+            self.llm = GoogleGenAI(
                 model=settings.model_name,
                 api_key=settings.google_api_key,
                 temperature=0.3
             )
-            
-            # Initialize Google embeddings
+
+            # Initialize Google embeddings (text-embedding-004 was retired Jan 2026)
             self.embed_model = GoogleGenAIEmbedding(
-                model_name="text-embedding-004",
+                model_name=settings.embedding_model,
                 embed_batch_size=100,
                 api_key=settings.google_api_key,
             )
