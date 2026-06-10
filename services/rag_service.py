@@ -50,9 +50,9 @@ class RAGService:
                 temperature=0.3
             )
             
-            # Initialize Google embeddings
+            # Initialize Google embeddings (text-embedding-004 was retired Jan 2026)
             self.embed_model = GoogleGenAIEmbedding(
-                model_name="text-embedding-004",
+                model_name=settings.embedding_model,
                 embed_batch_size=100,
                 api_key=settings.google_api_key,
             )

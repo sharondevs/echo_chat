@@ -16,8 +16,8 @@ class Settings(BaseSettings):
     max_tokens: int = 8192
     
     # LLM Configuration
-    model_name: str = "gemini-2.0-flash"
-    embedding_model: str = "models/gemini-embedding-exp-03-07"
+    model_name: str = "gemini-2.5-flash"
+    embedding_model: str = "gemini-embedding-001"
     chunk_size: int = 1024
     chunk_overlap: int = 200
     
