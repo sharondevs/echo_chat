@@ -32,8 +32,8 @@ class RAGService:
              temperature=0.4,
              system_instruction=settings.resume_system_prompt,
              max_output_tokens=settings.max_tokens,
-             frequency_penalty=settings.frequency_penalty,
-             presence_penalty=settings.presence_penalty,
+             # NOTE: gemini-2.5-flash does not support frequency/presence penalties
+             # (returns 400 "Penalty is not enabled"); they are intentionally omitted.
             )
 
         # this setup's llamaindex for RAG mode
